@@ -22,10 +22,11 @@ services:
       N8N_QA_OWNER_EMAIL: qa@example.com
       N8N_QA_OWNER_PASSWORD: ${N8N_QA_OWNER_PASSWORD:?set N8N_QA_OWNER_PASSWORD on the test target}
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5678/healthz').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+      # /healthz answers before migrations finish. /healthz/readiness waits for them.
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5678/healthz/readiness').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
       interval: 5s
       timeout: 5s
       retries: 20
-      start_period: 180s # the first boot runs every database migration
+      start_period: 300s # the first boot runs every database migration
     labels:
       ai.qlane.postdeploy: "node docker/qlane/seed-owner.mjs"

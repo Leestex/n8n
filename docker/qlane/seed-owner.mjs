@@ -8,6 +8,24 @@ if (!email || !password) {
 	process.exit(1);
 }
 
+// The REST routes exist only after migrations finish, so wait for readiness first.
+const isReady = async () => {
+	try {
+		return (await fetch('http://127.0.0.1:5678/healthz/readiness')).ok;
+	} catch {
+		return false;
+	}
+};
+
+const deadline = Date.now() + 60_000;
+while (!(await isReady())) {
+	if (Date.now() > deadline) {
+		console.error('n8n did not report ready within 60 seconds.');
+		process.exit(1);
+	}
+	await new Promise((resolve) => setTimeout(resolve, 2_000));
+}
+
 const response = await fetch('http://127.0.0.1:5678/rest/owner/setup', {
 	method: 'POST',
 	headers: { 'Content-Type': 'application/json' },
