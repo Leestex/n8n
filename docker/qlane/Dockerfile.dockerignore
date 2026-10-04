@@ -1,0 +1,11 @@
+# Used instead of the root .dockerignore for docker/qlane/Dockerfile, which
+# builds from source and needs the whole workspace.
+**/node_modules
+**/dist
+**/.turbo
+**/coverage
+.git
+compiled
+build.log
+.agent-setup
+**/.env
