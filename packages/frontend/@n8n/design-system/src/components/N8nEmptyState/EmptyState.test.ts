@@ -168,3 +168,5 @@ describe('N8nEmptyState', () => {
 		});
 	});
 });
+
+// Exercises the icon cards on load.
